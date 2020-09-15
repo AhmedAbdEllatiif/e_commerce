@@ -1,5 +1,8 @@
 import 'package:e_commerce/screens/regeister_screen.dart';
-import 'package:e_commerce/widgets.dart';
+
+import 'package:e_commerce/widgets/custom_button.dart';
+import 'package:e_commerce/widgets/custom_input_field.dart';
+import 'package:e_commerce/widgets/custom_scroll_behavior.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,13 +15,12 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-
-
-
   String _loginEmail = "";
   String _loginPassword = "";
   FocusNode passwordFocusNode;
   bool showPassword = true;
+  bool isLoading = false;
+
   @override
   void initState() {
     passwordFocusNode = FocusNode();
@@ -31,7 +33,77 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
+  bool checkFields() {
+    return _loginEmail.trim() == "" || _loginPassword.trim() == "";
+  }
 
+  Future<bool> loginUser() async {
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+              email: _loginEmail, password: _loginPassword);
+
+      if (userCredential != null) {
+        return true;
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+        showAlertDialog(
+            title: 'Wrong e-mail', content: 'No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
+        showAlertDialog(
+            title: 'Wrong Password',
+            content: 'Wrong password provided for that user.');
+      }
+    }
+    return false;
+  }
+
+  Future<void> showAlertDialog({String title, String content}) async {
+    return showDialog(
+      context: context,
+      //barrierDismissible: false, //To make Dismissible
+      builder: (context) {
+        return Container(
+          alignment: Alignment.center,
+          child: AlertDialog(
+            title: Text(title ?? "Error"),
+            content: Container(
+              child: Text(content ?? "Error has happened"),
+            ),
+            actions: [
+              FlatButton(
+                  onPressed: () {
+                    setState(() {
+                      isLoading = false;
+                    });
+                    Navigator.pop(context);
+                  },
+                  child: Text("Close"))
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void submitLogin() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    bool isLoggedIn = await loginUser();
+
+    isLoggedIn
+        ? setState(() {
+            isLoading = false;
+          })
+        : setState(() {
+            isLoading = false;
+          });
+  }
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,36 +134,34 @@ class _LoginPageState extends State<LoginPage> {
                       ],
                     ),
                   ),
-
-
-
-                  Column(// Login
+                  Column(
+                    // Login
                     children: [
                       CustomInputField(
-                          hint: 'Email . . .',
-                        onChanged: (value){
-                          _loginEmail = value;
+                        hint: 'Email . . .',
+                        onChanged: (value) {
+                          _loginEmail = value.trim();
                         },
-                        onSubmitted: (value){
+                        onSubmitted: (value) {
                           _loginPassword = value;
                           passwordFocusNode.requestFocus();
                         },
                         inputAction: TextInputAction.next,
                         inputType: TextInputType.emailAddress,
-
                       ),
                       CustomInputField(
-                          hint: 'Password . . .',
+                        hint: 'Password . . .',
                         isPasswordInput: true,
-                        onChanged: (value){
+                        onChanged: (value) {
                           _loginPassword = value;
                         },
-                        onSubmitted: (value){
-                          _loginPassword = value;
+                        onSubmitted: (value) {
+                          _loginPassword = value.trim();
+                          submitLogin();
                         },
                         focusNode: passwordFocusNode,
-                          isShowPassword: showPassword,
-                        onShowPassword: (){
+                        isShowPassword: showPassword,
+                        onShowPassword: () {
                           setState(() {
                             showPassword = !showPassword;
                           });
@@ -102,20 +172,24 @@ class _LoginPageState extends State<LoginPage> {
                         backgroundColor: Colors.black,
                         textColor: Colors.white,
                         borderColor: Colors.black,
-                        onClicked: (){
-                          print("Login Clicked");
+                        isLoading: isLoading,
+                        onClicked: () {
+                          checkFields()
+                              ? showAlertDialog(
+                                  title: 'Required Fields',
+                                  content: 'All fields are required')
+                              : submitLogin();
                         },
                       ),
                     ],
                   ),
-
-
                   CustomButton(
                     text: "Create New Account",
-                    onClicked: (){
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => RegisterPage())
-                      );
+                    onClicked: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => RegisterPage()));
                       print("Button Clicked");
                     },
                   ),
@@ -128,10 +202,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-
-
-
-  /*@override
+/*@override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(

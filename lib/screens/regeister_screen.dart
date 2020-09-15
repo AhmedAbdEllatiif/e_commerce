@@ -1,9 +1,12 @@
+import 'package:e_commerce/widgets/custom_button.dart';
+import 'package:e_commerce/widgets/custom_input_field.dart';
+import 'package:e_commerce/widgets/custom_scroll_behavior.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../appUtils.dart';
-import '../widgets.dart';
+
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -91,9 +94,6 @@ bool showPassword = true;
       isLoading = false;
 
     });
-
-
-
   }
 
  @override
@@ -178,7 +178,10 @@ bool showPassword = true;
                        borderColor: Colors.black,
                        isLoading: isLoading,
                        onClicked: () {
-                         checkFields() ? showAlertDialog() : submitNewUser();
+                         checkFields() ? showAlertDialog(
+                           title: 'Required Fields',
+                           content: 'All fields are required'
+                         ) : submitNewUser();
                        },
                      ),
                    ],
