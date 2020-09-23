@@ -1,7 +1,17 @@
+import 'dart:ffi';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class AppUtils {}
+class AppUtils {
+  static const String images_dir = 'assets/';
+}
+
+
+class Dimension {
+  static const double small_box_dimen = 42.0;
+}
+
 
 class Constants {
   static const regularHeading = TextStyle(

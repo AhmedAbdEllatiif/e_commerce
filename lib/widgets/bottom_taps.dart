@@ -87,7 +87,7 @@ class BottomTabBtn extends StatelessWidget {
                           : Colors.transparent,
                       width: 2.0))),
           child: Image(
-            image: AssetImage('assets/$logo'),
+            image: AssetImage('${AppUtils.images_dir}$logo'),
             color: _isSelected ? Theme.of(context).accentColor : Colors.black,
             width: 22.0,
             height: 22.0,
