@@ -167,31 +167,37 @@ class _LoginPageState extends State<LoginPage> {
                           });
                         },
                       ),
-                      CustomButton(
-                        text: "Login",
-                        backgroundColor: Colors.black,
-                        textColor: Colors.white,
-                        borderColor: Colors.black,
-                        isLoading: isLoading,
-                        onClicked: () {
-                          checkFields()
-                              ? showAlertDialog(
-                                  title: 'Required Fields',
-                                  content: 'All fields are required')
-                              : submitLogin();
-                        },
+                      Container(
+                        margin: EdgeInsets.fromLTRB(24.0, 0.0, 24.0, 24.0),
+                        child: CustomButton(
+                          text: "Login",
+                          backgroundColor: Colors.black,
+                          textColor: Colors.white,
+                          borderColor: Colors.black,
+                          isLoading: isLoading,
+                          onClicked: () {
+                            checkFields()
+                                ? showAlertDialog(
+                                    title: 'Required Fields',
+                                    content: 'All fields are required')
+                                : submitLogin();
+                          },
+                        ),
                       ),
                     ],
                   ),
-                  CustomButton(
-                    text: "Create New Account",
-                    onClicked: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => RegisterPage()));
-                      print("Button Clicked");
-                    },
+                  Container(
+                    margin: EdgeInsets.fromLTRB(24.0, 0.0, 24.0, 24.0),
+                    child: CustomButton(
+                      text: "Create New Account",
+                      onClicked: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => RegisterPage()));
+                        print("Button Clicked");
+                      },
+                    ),
                   ),
                 ],
               ),

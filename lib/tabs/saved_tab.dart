@@ -16,7 +16,6 @@ class _SavedTabState extends State<SavedTab> {
             child: Text("Hello Home Tab"),
           ),
           CustomActionBar(
-            cartNum: 0,
             title: 'Saved Products',
             hasBackArrow: false,
             hasTitle: true,

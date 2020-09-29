@@ -8,9 +8,10 @@ class CustomButton extends StatelessWidget {
   final Color borderColor;
   final Function  onClicked;
   final bool isLoading;
+  final double height;
 
   CustomButton({this.text,this.backgroundColor,this.textColor,this.borderColor,this
-      .isLoading, this.onClicked});
+      .isLoading,this.height, this.onClicked});
 
   @override
   Widget build(BuildContext context) {
@@ -21,9 +22,8 @@ class CustomButton extends StatelessWidget {
       onTap: onClicked,
       child: Center(
         child: Container(
-          height: 50.0,
+          height: height??50.0,
           alignment: Alignment.center,
-          margin: EdgeInsets.fromLTRB(24.0, 0.0, 24.0, 24.0),
           decoration: BoxDecoration(
               color: backgroundColor??Colors.transparent,
               borderRadius: BorderRadius.circular(15.0),

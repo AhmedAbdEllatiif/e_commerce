@@ -171,26 +171,32 @@ bool showPassword = true;
                          });
                        },
                      ),
-                     CustomButton(
-                       text: "Create Account",
-                       backgroundColor: Colors.black,
-                       textColor: Colors.white,
-                       borderColor: Colors.black,
-                       isLoading: isLoading,
-                       onClicked: () {
-                         checkFields() ? showAlertDialog(
-                           title: 'Required Fields',
-                           content: 'All fields are required'
-                         ) : submitNewUser();
-                       },
+                     Container(
+                       margin: EdgeInsets.fromLTRB(24.0, 0.0, 24.0, 24.0),
+                       child: CustomButton(
+                         text: "Create Account",
+                         backgroundColor: Colors.black,
+                         textColor: Colors.white,
+                         borderColor: Colors.black,
+                         isLoading: isLoading,
+                         onClicked: () {
+                           checkFields() ? showAlertDialog(
+                             title: 'Required Fields',
+                             content: 'All fields are required'
+                           ) : submitNewUser();
+                         },
+                       ),
                      ),
                    ],
                  ),
-                 CustomButton(
-                   text: "Back To Login",
-                   onClicked: () {
-                     Navigator.pop(context);
-                   },
+                 Container(
+                   margin: EdgeInsets.fromLTRB(24.0, 0.0, 24.0, 24.0),
+                   child: CustomButton(
+                     text: "Back To Login",
+                     onClicked: () {
+                       Navigator.pop(context);
+                     },
+                   ),
                  ),
                ],
              ),

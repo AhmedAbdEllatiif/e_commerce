@@ -59,6 +59,7 @@ class _HomeTabState extends State<HomeTab> {
                 );
               }
 
+
               ///loading Status
               return Scaffold(
                 body: Center(
@@ -68,7 +69,6 @@ class _HomeTabState extends State<HomeTab> {
             },
           ),
           CustomActionBar(
-            cartNum: 3,
             title: 'Home',
             hasBackArrow: false,
             hasTitle: true,
