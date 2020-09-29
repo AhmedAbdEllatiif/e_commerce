@@ -7,20 +7,22 @@ class CustomActionBar extends StatelessWidget {
   final String title;
   final bool hasBackArrow;
   final bool hasTitle;
+  final bool hasBackground;
   final int cartNum;
 
-  CustomActionBar({this.title, this.hasBackArrow,this.hasTitle, this.cartNum});
+  CustomActionBar({this.title, this.hasBackArrow,this.hasTitle, this.cartNum,this.hasBackground});
 
   @override
   Widget build(BuildContext context) {
     bool _hasBackArrow = hasBackArrow ?? false;
     bool _hasTitle = hasTitle ?? true;
     int _cartNum = cartNum ?? 0;
+    bool _hasBackground = hasBackground ?? true;
     bool _isCartEmpty = (_cartNum == 0);
 
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: hasBackground ? LinearGradient(
           colors: [
             Colors.white,
             Colors.white.withOpacity(0)
@@ -28,8 +30,8 @@ class CustomActionBar extends StatelessWidget {
           begin: Alignment(0,0),
           end: Alignment(0,1)
 
-        )
-      ),
+        ): null
+      ) ,
         padding:
             EdgeInsets.only(left: 24.0, right: 24.0, top: 40.0, bottom: 42.0),
         child: Row(

@@ -10,6 +10,12 @@ class AppUtils {
 
 class Dimension {
   static const double small_box_dimen = 42.0;
+  static const double saved_box_dimen = 50.0;
+}
+
+
+class FireStoreConstants {
+  static const String product_collection = 'Products';
 }
 
 
