@@ -18,9 +18,17 @@ class Dimension {
 
 class FireStoreConstants {
   static const String product_collection = 'Products';
+  static const String saved_product_collection = 'Saved Products';
   static const String users_collection = 'Users';
   static const String cart_collection = 'Cart';
   static const String size_doc = 'size';
+  static const String id = 'id';
+  static const String productDesc = 'desc';
+  static const String productImages = 'images';
+  static const String productImageUrl = 'url';
+  static const String productName = 'name';
+  static const String productPrice = 'price';
+  static const String productSizes = 'size';
 }
 
 
@@ -42,12 +50,23 @@ class FireStoreReferences{
   static CollectionReference productsReference = FirebaseFirestore.instance
       .collection('${FireStoreConstants.product_collection}');
 
+  ///Reference on saved Products collection
+  static CollectionReference savedProductsReference = FirebaseFirestore.instance
+      .collection('${FireStoreConstants.saved_product_collection}');
 }
 
 
 
 class Constants {
-  static const regularHeading = TextStyle(
+
+ static const priceStyle = TextStyle(
+     fontSize: 18.0,
+     fontWeight: FontWeight.w600,
+     color: Color(0xFFFF1E00)
+ );
+
+
+ static const regularHeading = TextStyle(
     fontSize: 18.0,
     fontWeight: FontWeight.w600,
     color: Colors.black

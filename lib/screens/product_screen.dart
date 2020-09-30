@@ -19,28 +19,21 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
+  final globalKey = GlobalKey<ScaffoldState>();
   String _productId;
   dynamic _selectedSize;
+  DocumentReference productDocReference;
 
   @override
   void initState() {
     _productId = widget.productId ?? 'UnKnown productId';
+    productDocReference =
+        FireStoreReferences.productsReference.doc('$_productId');
     super.initState();
   }
 
-  DocumentReference productDocReference;
-
-  final globalKey = GlobalKey<ScaffoldState>();
-
   @override
   Widget build(BuildContext buildContext) {
-    productDocReference = FireStoreReferences.productsReference.doc('${widget.productId}');
-
-
-
-
-
-
     return SafeArea(
       child: Container(
         child: Stack(
@@ -48,7 +41,6 @@ class _ProductPageState extends State<ProductPage> {
             FutureBuilder<DocumentSnapshot>(
               future: productDocReference.get(),
               builder: (context, snapshot) {
-
                 ///Snapshot has error
                 if (snapshot.hasError) {
                   return Scaffold(
@@ -88,7 +80,6 @@ class _ProductPageState extends State<ProductPage> {
       ),
     );
   }
-
 
   ListView mainView(context, data) {
     List<dynamic> imagesList = data['images'];
@@ -150,7 +141,7 @@ class _ProductPageState extends State<ProductPage> {
           padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 19.0),
           child: SizesBoxes(
             sizeList: sizeList,
-            onSizeChanged: (size){
+            onSizeChanged: (size) {
               _selectedSize = size;
             },
           ),
@@ -164,27 +155,9 @@ class _ProductPageState extends State<ProductPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-
               ///Save button
-              GestureDetector(
-                onTap: (){
-                  showSnackBar("This is Snack bar");
-                },
-                child: Container(
-                    child: Image(
-                      width: 13.0,
-                      height: 22.0,
-                      image: AssetImage('${AppUtils.images_dir}bookmark.png'),
-                    ),
-                    alignment: Alignment.center,
-                    margin: EdgeInsets.symmetric(horizontal: 5.0),
-                    width: Dimension.saved_box_dimen,
-                    height: Dimension.saved_box_dimen,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      color: Colors.grey.withOpacity(0.5),
-                    )
-                ),
+              SaveButton(
+                productId: _productId,
               ),
 
               ///Add to cart button
@@ -196,13 +169,12 @@ class _ProductPageState extends State<ProductPage> {
                     text: 'Add To Cart',
                     backgroundColor: Colors.black,
                     textColor: Colors.white,
-                    onClicked: () async{
-                       await addToCart();
+                    onClicked: () async {
+                      await addToCart();
                     },
                   ),
                 ),
               )
-
             ],
           ),
         )
@@ -210,30 +182,103 @@ class _ProductPageState extends State<ProductPage> {
     );
   }
 
-
-
-  Future addToCart(){
+  ///To add product to the cart
+  Future addToCart() {
     return FireStoreReferences.cartReference
         .doc(_productId)
-        .set({
-          '${FireStoreConstants.size_doc}' : _selectedSize ?? -1
-        })
-    .then((value) => showSnackBar('Product Added To Cart'))
-    .catchError((error) => showSnackBar('$error') );
-
+        .set({'${FireStoreConstants.size_doc}': _selectedSize ?? -1})
+        .then((value) => showSnackBar('Product Added To Cart'))
+        .catchError((error) => showSnackBar('$error'));
   }
 
-
-
-
-
-  void showSnackBar(String content){
-  //Scaffold.of(context).showSnackBar(SnackBar(content: Text("$content")));
-  globalKey.currentState.showSnackBar(SnackBar(content: Text("$content")));
+  ///To show snackBar with message
+  void showSnackBar(String content) {
+    //Scaffold.of(context).showSnackBar(SnackBar(content: Text("$content")));
+    globalKey.currentState.showSnackBar(SnackBar(content: Text("$content")));
   }
-
-
 }
 
 
 
+
+
+
+
+class SaveButton extends StatefulWidget {
+  final String productId;
+
+  SaveButton({this.productId});
+
+  @override
+  _SaveButtonState createState() => _SaveButtonState();
+}
+
+class _SaveButtonState extends State<SaveButton> {
+  String _productId;
+  bool isSaved = false;
+
+  @override
+  void initState() {
+    _productId = widget.productId ?? "-1";
+    changeButtonColorWithSavedStatus();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        savedProduct();
+        //showSnackBar("This is Snack bar");
+      },
+      child: Container(
+          child: Image(
+            width: 13.0,
+            height: 22.0,
+            image: AssetImage('${AppUtils.images_dir}bookmark.png'),
+            color: isSaved ? Colors.white : Colors.grey,
+          ),
+          alignment: Alignment.center,
+          margin: EdgeInsets.symmetric(horizontal: 5.0),
+          width: Dimension.saved_box_dimen,
+          height: Dimension.saved_box_dimen,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10.0),
+            color: isSaved ? Color(0xFFFF1E00) : Colors.grey.withOpacity(0.5),
+          )),
+    );
+  } //build
+
+  ///To save a product
+  Future savedProduct() {
+    return FireStoreReferences.savedProductsReference
+        .doc(_productId)
+        .get()
+        .then((value) {
+      if (value.exists) {
+        value.reference.delete();
+      } else {
+        value.reference.set({'${FireStoreConstants.id}': _productId ?? "-1"});
+      }
+      changeButtonColorWithSavedStatus();
+    }).catchError((error) => print('$error'));
+  }
+
+  ///To save a product
+  Future changeButtonColorWithSavedStatus() {
+    return FireStoreReferences.savedProductsReference
+        .doc(_productId)
+        .get()
+        .then((value) {
+      if (value.exists) {
+        setState(() {
+          isSaved = true;
+        });
+      } else {
+        setState(() {
+          isSaved = false;
+        });
+      }
+    });
+  }
+}
